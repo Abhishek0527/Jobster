@@ -1,16 +1,21 @@
 import React from 'react'
-import Logo from './Logo'
 
-function FormRow({ type, name, value, labeltext, handleChange }) {
+function FormRow({ type, name, value, labelText, handleChange, disabled = false }) {
     return (
-      
-            <div className='form-row'>
-                <label htmlFor={name} className='form-label'>
-                {labeltext || name}
-                </label>
-                <input type={type} name={name} onChange={handleChange} value={value} className='form-input'></input>
-            </div>
-      
+        <div className='form-row'>
+            <label htmlFor={name} className='form-label'>
+                {labelText || name}
+            </label>
+            <input
+                id={name}
+                type={type}
+                name={name}
+                onChange={handleChange}
+                value={value}
+                disabled={disabled}
+                className='form-input'
+            />
+        </div>
     )
 }
 

@@ -1,13 +1,14 @@
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import FormRow from '../../components/FormRow'
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import Wrapper from '../../assets/wrappers/DashboardFormPage';
+import FormRow from '../../components/FormRow';
 import FormRowSelect from '../../components/FormRowSelect';
-import { clearValues, createjob, handleChange } from '../../features/job/jobSlice';
+import { clearValues, createjob, editJob, handleChange } from '../../features/job/jobSlice';
 
 const AddJob = () => {
-  const { isLoading,
+  const {
+    isLoading,
     position,
     company,
     jobLocation,
@@ -16,18 +17,18 @@ const AddJob = () => {
     statusOptions,
     status,
     isEditing,
-    editJobId } = useSelector((store) => store.job)
-
-  const dispatch = useDispatch()
-
+    editJobId,
+  } = useSelector((store) => store.job);
   const { user } = useSelector((store) => store.user);
 
-useEffect(() => {
-  // eventually will check for isEditing
-  // if (!isEditing) {
-    dispatch(handleChange({ name: 'jobLocation', value: user.location }));
- // }
-}, []);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!isEditing && user?.location) {
+      dispatch(handleChange({ name: 'jobLocation', value: user.location }));
+    }
+  }, [dispatch, isEditing, user]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -35,8 +36,17 @@ useEffect(() => {
       toast.error('Please Fill Out All Fields');
       return;
     }
-    dispatch(createjob({position, company, jobLocation, jobType, status}));
+
+    const jobData = { position, company, jobLocation, jobType, status };
+
+    if (isEditing) {
+      dispatch(editJob({ jobId: editJobId, jobData }));
+      return;
+    }
+
+    dispatch(createjob(jobData));
   };
+
   const handleJobInput = (e) => {
     const name = e.target.name;
     const value = e.target.value;
@@ -45,25 +55,12 @@ useEffect(() => {
 
   return (
     <Wrapper>
-      <form className='form'>
+      <form className='form' onSubmit={handleSubmit}>
         <h3>{isEditing ? 'edit job' : 'add job'}</h3>
 
         <div className='form-center'>
-          {/* position */}
-          <FormRow
-            type='text'
-            name='position'
-            value={position}
-            handleChange={handleJobInput}
-          />
-          {/* company */}
-          <FormRow
-            type='text'
-            name='company'
-            value={company}
-            handleChange={handleJobInput}
-          />
-          {/* location */}
+          <FormRow type='text' name='position' value={position} handleChange={handleJobInput} />
+          <FormRow type='text' name='company' value={company} handleChange={handleJobInput} />
           <FormRow
             type='text'
             labelText='job location'
@@ -77,7 +74,6 @@ useEffect(() => {
             handleChange={handleJobInput}
             list={statusOptions}
           />
-          {/* job type*/}
           <FormRowSelect
             name='jobType'
             labelText='job type'
@@ -85,7 +81,6 @@ useEffect(() => {
             handleChange={handleJobInput}
             list={jobTypeOptions}
           />
-          {/* btn container */}
           <div className='btn-container'>
             <button
               type='button'
@@ -94,13 +89,8 @@ useEffect(() => {
             >
               clear
             </button>
-            <button
-              type='submit'
-              className='btn btn-block submit-btn'
-              onClick={handleSubmit}
-              disabled={isLoading}
-            >
-              submit
+            <button type='submit' className='btn btn-block submit-btn' disabled={isLoading}>
+              {isLoading ? 'please wait...' : 'submit'}
             </button>
           </div>
         </div>

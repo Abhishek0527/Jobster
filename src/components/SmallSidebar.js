@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Wrapper from '../assets/wrappers/SmallSidebar';
 import { FaTimes } from 'react-icons/fa';
 import Logo from './Logo';
@@ -24,7 +24,7 @@ const SmallSidebar = () => {
                     <header>
                         <Logo />
                     </header>
-                   <Navlinks toggleSidebar={toggleSidebar} />
+                   <Navlinks toggleSidebar={toggle} />
                 </div>
             </div>
         </Wrapper>
