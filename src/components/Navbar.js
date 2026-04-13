@@ -1,40 +1,47 @@
-import React, { useState } from 'react'
-import Wrapper from '../assets/wrappers/Navbar'
-import { FaAlignLeft, FaUserCircle, FaCaretDown } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
-import Logo from './Logo';
-import { toggleSidebar , logoutuser } from '../features/user/userSlice';
+import { NavLink } from 'react-router-dom';
+import Wrapper from '../assets/wrappers/Navbar';
+import { logoutuser } from '../features/user/userSlice';
+
+const navItems = [
+  { label: 'Stats', path: '/' },
+  { label: 'All Jobs', path: '/all-jobs' },
+  { label: 'Add Job', path: '/add-job' },
+  { label: 'Profile', path: '/profile' },
+];
 
 const Navbar = () => {
-    const user = useSelector((store) => store.user)
-    const dispatch = useDispatch()
-    const toggle = () => dispatch(toggleSidebar())
-    const [showlogout,setShowlogout] = useState(false)
-    return (
-        <Wrapper>
-            <div className='nav-center'>
-                <button type='button' className='toggle-btn' onClick={toggle}>
-                    <FaAlignLeft />
-                </button>
-                <div>
-                    <Logo />
-                    <h3 className='logo-text'>Dashboard</h3>
-                </div>
-                <div className='btn-container'>
-                    <button type='button' className='btn' onClick={ () => setShowlogout(!showlogout)}>
-                        <FaUserCircle />
-                        {user?.user?.name}
-                        <FaCaretDown />
-                    </button>
-                    <div className= {showlogout ? 'dropdown show-dropdown' : 'dropdown' }>
-                        <button type='button' className='dropdown-btn' onClick={ () => dispatch(logoutuser())}>
-                            Logout
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </Wrapper>
-    )
-}
+  const dispatch = useDispatch();
+  const { user } = useSelector((store) => store.user);
 
-export default Navbar
+  return (
+    <Wrapper>
+      <div className='nav-center'>
+        <div className='brand-section'>
+          <h3>Jobster</h3>
+          <p>Simple job tracker</p>
+        </div>
+        <div className='nav-links'>
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              end={item.path === '/'}
+              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+            >
+              {item.label}
+            </NavLink>
+          ))}
+        </div>
+        <div className='user-actions'>
+          <span className='welcome-text'>Hi, {user?.name || 'User'}</span>
+          <button type='button' className='btn logout-btn' onClick={() => dispatch(logoutuser())}>
+            Logout
+          </button>
+        </div>
+      </div>
+    </Wrapper>
+  );
+};
+
+export default Navbar;

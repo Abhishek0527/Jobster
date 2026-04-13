@@ -1,24 +1,28 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { ChartsContainer, Loading, StatsContainer } from '../../components';
-import { showStats } from '../../features/allJobs/alljobsSlice';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import { ChartsContainer, StatsContainer } from '../../components';
+import {
+  deleteTrackedJobFromStorage,
+  getTrackedJobsFromStorage,
+} from '../../utils/trackedJobsStorage';
 
 const Stats = () => {
-  const dispatch = useDispatch();
-  const { isLoading } = useSelector((store) => store.allJobs);
+  const [trackedJobs, setTrackedJobs] = useState([]);
 
   useEffect(() => {
-    dispatch(showStats());
-  }, [dispatch]);
+    setTrackedJobs(getTrackedJobsFromStorage());
+  }, []);
 
-  if (isLoading) {
-    return <Loading center />;
-  }
+  const handleDelete = (jobId) => {
+    const updatedJobs = deleteTrackedJobFromStorage(jobId);
+    setTrackedJobs(updatedJobs);
+    toast.success('Tracked job removed');
+  };
 
   return (
     <>
-      <StatsContainer />
-      <ChartsContainer />
+      <StatsContainer trackedJobs={trackedJobs} />
+      <ChartsContainer trackedJobs={trackedJobs} onDelete={handleDelete} />
     </>
   );
 };

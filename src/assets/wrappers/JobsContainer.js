@@ -12,6 +12,7 @@ const Wrapper = styled.section`
     display: grid;
     grid-template-columns: 1fr;
     row-gap: 2rem;
+    align-items: stretch;
   }
   @media (min-width: 992px) {
     .jobs {

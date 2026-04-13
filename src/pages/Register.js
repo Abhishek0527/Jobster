@@ -4,7 +4,7 @@ import Logo from '../components/Logo'
 import FormRow from '../components/FormRow'
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser, registerUser } from '../features/user/userSlice';
+import { loginUserRequest, registerUserRequest } from '../features/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 const initialstate = {
@@ -32,10 +32,10 @@ function Register() {
             return
         }
         if (isMember) {
-            dispatch(loginUser({ email: email, password: password }))
+            dispatch(loginUserRequest({ email: email, password: password }))
             return
         }
-        dispatch(registerUser({ name, email, password }))
+        dispatch(registerUserRequest({ name, email, password }))
 
     }
     const toggleMember = () => {

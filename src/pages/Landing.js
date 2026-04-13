@@ -1,7 +1,7 @@
 import React from 'react'
 import main from '../assets/images/main.svg';
 import Wrapper from '../assets/wrappers/LandingPage';
-import  Logo  from '../components/Logo';
+import Logo from '../components/Logo';
 import { Link } from 'react-router-dom';
 
 const Landing = () => {
@@ -13,14 +13,17 @@ const Landing = () => {
       </nav>
       <div className='container page'>
         <div className='info'>
+          <span className='eyebrow'>Modern job tracking, built for focus</span>
           <h1>
-            job <span>tracking</span> app
+            Track every opportunity with a cleaner workflow
           </h1>
           <p>
-            Your all-in-one job application management companion designed to streamline your job search journey.Experience the future of job application management with JobTrackr today.
+            Save the jobs you care about, explore live openings, and keep your application journey organized in one calm, modern dashboard.
           </p>
-          <Link to='/Register' className='btn btn-hero'>Login/Register</Link>
-
+          <div className='hero-actions'>
+            <Link to='/Register' className='btn btn-hero'>Get Started</Link>
+            <Link to='/Register' className='btn btn-hero secondary-link'>Open Dashboard</Link>
+          </div>
         </div>
         <img src={main} alt='job hunt' className='img main-img' />
       </div>

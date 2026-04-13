@@ -1,95 +1,83 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { toast } from "react-toastify";
-import { addUserToLocalStorage, removeUserFromLocalStorage, getUserFromLocalStorage } from "../../utils/localStorage";
-import { loginUserThunk, registerUserThunk, updateuserThunk } from "./userThunk";
-
+import { createSlice } from '@reduxjs/toolkit';
+import {
+  addUserToLocalStorage,
+  getUserFromLocalStorage,
+  removeUserFromLocalStorage,
+} from '../../utils/localStorage';
 
 const initialState = {
-    isLoading: false,
-    isSidebarOpen: false,
-    user: getUserFromLocalStorage(),
+  isLoading: false,
+  isSidebarOpen: false,
+  user: getUserFromLocalStorage(),
+  error: null,
 };
 
-
-export const registerUser = createAsyncThunk(
-    'user/registerUser',
-    async (user, thunkAPI) => {
-      return  registerUserThunk(user, thunkAPI,'/auth/register')
-    }
-);
-export const loginUser = createAsyncThunk(
-    'user/loginUser',
-    async (user, thunkAPI) => {
-     return loginUserThunk(user, thunkAPI,'/auth/login')
-    }
-)
-export const updateuser = createAsyncThunk(
-    'user/updateuser',
-    async (user, thunkAPI) => {
-     return   updateuserThunk(user, thunkAPI,'/auth/updateUser')
-    }
-)
-
 const userSlice = createSlice({
-    name: 'user',
-    initialState,
-    reducers: {
-        toggleSidebar: (state) => {
-            state.isSidebarOpen = !state.isSidebarOpen
-        },
-        logoutuser: (state) => {
-            state.isSidebarOpen = false;
-            state.user = null;
-            removeUserFromLocalStorage()
-        }
+  name: 'user',
+  initialState,
+  reducers: {
+    toggleSidebar: (state) => {
+      state.isSidebarOpen = !state.isSidebarOpen;
     },
-    extraReducers: (builder) => {
-        builder
-            .addCase(registerUser.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(registerUser.fulfilled, (state, { payload }) => {
-                const { user } = payload;
-                state.isLoading = false;
-                state.user = user;
-                addUserToLocalStorage(user);
-                toast.success(`Hello There ${user.name}`);
-            })
-            .addCase(registerUser.rejected, (state, { payload }) => {
-                state.isLoading = false;
-                toast.error(payload);
-            })
-            .addCase(loginUser.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(loginUser.fulfilled, (state, { payload }) => {
-                const { user } = payload;
-                state.isLoading = false;
-                state.user = user;
-                addUserToLocalStorage(user);
-                toast.success(`Welcome Back ${user.name}`);
-            })
-            .addCase(loginUser.rejected, (state, { payload }) => {
-                state.isLoading = false;
-                toast.error(payload);
-            })
-            .addCase(updateuser.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(updateuser.fulfilled, (state, { payload }) => {
-                const { user } = payload;
-                state.isLoading = false;
-                state.user = user;
-                addUserToLocalStorage(user);
-                toast.success(`User data updated for ${user.name}`);
-            })
-            .addCase(updateuser.rejected, (state, { payload }) => {
-                state.isLoading = false;
-                toast.error(payload);
-            })
+    logoutuser: (state) => {
+      state.isSidebarOpen = false;
+      state.user = null;
+      state.error = null;
+      removeUserFromLocalStorage();
+    },
+    registerUserRequest: (state) => {
+      state.isLoading = true;
+      state.error = null;
+    },
+    registerUserSuccess: (state, { payload }) => {
+      state.isLoading = false;
+      state.user = payload.user;
+      addUserToLocalStorage(payload.user);
+    },
+    registerUserFailure: (state, { payload }) => {
+      state.isLoading = false;
+      state.error = payload;
+    },
+    loginUserRequest: (state) => {
+      state.isLoading = true;
+      state.error = null;
+    },
+    loginUserSuccess: (state, { payload }) => {
+      state.isLoading = false;
+      state.user = payload.user;
+      addUserToLocalStorage(payload.user);
+    },
+    loginUserFailure: (state, { payload }) => {
+      state.isLoading = false;
+      state.error = payload;
+    },
+    updateuserRequest: (state) => {
+      state.isLoading = true;
+      state.error = null;
+    },
+    updateuserSuccess: (state, { payload }) => {
+      state.isLoading = false;
+      state.user = payload.user;
+      addUserToLocalStorage(payload.user);
+    },
+    updateuserFailure: (state, { payload }) => {
+      state.isLoading = false;
+      state.error = payload;
+    },
+  },
+});
 
-    }
-})
-
-export default userSlice.reducer
-export const { toggleSidebar, logoutuser } = userSlice.actions
+export default userSlice.reducer;
+export const {
+  toggleSidebar,
+  logoutuser,
+  registerUserRequest,
+  registerUserSuccess,
+  registerUserFailure,
+  loginUserRequest,
+  loginUserSuccess,
+  loginUserFailure,
+  updateuserRequest,
+  updateuserSuccess,
+  updateuserFailure,
+} = userSlice.actions;

@@ -4,7 +4,7 @@ import Wrapper from '../assets/wrappers/Job';
 import JobInfo from './JobInfo';
 
 const Job = ({ job, onApply }) => {
-  const { title, company, location, experienceRequired, description, employmentType } = job;
+  const { title, company, location, experienceRequired, description, employmentType, source, applyUrl } = job;
 
   return (
     <Wrapper>
@@ -16,7 +16,7 @@ const Job = ({ job, onApply }) => {
         </div>
       </header>
       <div className='content'>
-        <p style={{ marginBottom: '1rem', maxWidth: '100%' }}>{description}</p>
+        <p className='job-description'>{description}</p>
         <div className='content-center'>
           <JobInfo icon={<FaLocationArrow />} text={location} />
           <JobInfo icon={<MdWorkHistory />} text={`${employmentType} role`} />
@@ -24,12 +24,24 @@ const Job = ({ job, onApply }) => {
             icon={<MdWorkHistory />}
             text={`experience required: ${experienceRequired}`}
           />
+          <JobInfo icon={<MdWorkHistory />} text={`source: ${source || 'local'}`} />
         </div>
         <footer>
           <div className='actions' style={{ visibility: 'visible' }}>
             <button type='button' className='btn edit-btn' onClick={() => onApply(job)}>
               apply
             </button>
+            {applyUrl ? (
+              <a
+                href={applyUrl}
+                target='_blank'
+                rel='noreferrer'
+                className='btn delete-btn'
+                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                view source
+              </a>
+            ) : null}
           </div>
         </footer>
       </div>

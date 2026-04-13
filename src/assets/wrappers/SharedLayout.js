@@ -1,22 +1,14 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 const Wrapper = styled.section`
-  .dashboard {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
+  min-height: 100vh;
+  background: transparent;
+
   .dashboard-page {
-    width: 90vw;
+    width: min(1180px, 92vw);
     margin: 0 auto;
-    padding: 2rem 0;
+    padding: 2.25rem 0 3.5rem;
   }
-  @media (min-width: 992px) {
-    .dashboard {
-      grid-template-columns: auto 1fr;
-    }
-    .dashboard-page {
-      width: 90%;
-    }
-  }
-`
-export default Wrapper
+`;
+
+export default Wrapper;

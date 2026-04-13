@@ -1,96 +1,142 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import Wrapper from '../../assets/wrappers/DashboardFormPage';
 import FormRow from '../../components/FormRow';
 import FormRowSelect from '../../components/FormRowSelect';
-import { clearValues, createjob, editJob, handleChange } from '../../features/job/jobSlice';
+import { addTrackedJobToStorage } from '../../utils/trackedJobsStorage';
+
+const initialState = {
+  title: '',
+  company: '',
+  location: '',
+  jobType: 'full-time',
+  workMode: 'onsite',
+  status: 'interested',
+  appliedDate: '',
+  jobLink: '',
+  notes: '',
+  cvFileName: '',
+};
 
 const AddJob = () => {
-  const {
-    isLoading,
-    position,
-    company,
-    jobLocation,
-    jobTypeOptions,
-    jobType,
-    statusOptions,
-    status,
-    isEditing,
-    editJobId,
-  } = useSelector((store) => store.job);
-  const { user } = useSelector((store) => store.user);
+  const [values, setValues] = useState(initialState);
 
-  const dispatch = useDispatch();
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setValues((current) => ({ ...current, [name]: value }));
+  };
 
-  useEffect(() => {
-    if (!isEditing && user?.location) {
-      dispatch(handleChange({ name: 'jobLocation', value: user.location }));
-    }
-  }, [dispatch, isEditing, user]);
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    setValues((current) => ({
+      ...current,
+      cvFileName: file ? file.name : '',
+    }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!position || !company || !jobLocation) {
-      toast.error('Please Fill Out All Fields');
+    if (!values.title || !values.company || !values.location || !values.appliedDate) {
+      toast.error('Please fill out the required fields');
       return;
     }
 
-    const jobData = { position, company, jobLocation, jobType, status };
+    addTrackedJobToStorage({
+      id: `tracked-${Date.now()}`,
+      ...values,
+      createdAt: new Date().toISOString(),
+    });
 
-    if (isEditing) {
-      dispatch(editJob({ jobId: editJobId, jobData }));
-      return;
-    }
-
-    dispatch(createjob(jobData));
-  };
-
-  const handleJobInput = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    dispatch(handleChange({ name, value }));
+    toast.success('Job saved to this browser');
+    setValues(initialState);
   };
 
   return (
     <Wrapper>
       <form className='form' onSubmit={handleSubmit}>
-        <h3>{isEditing ? 'edit job' : 'add job'}</h3>
+        <h3>Add tracked job</h3>
 
         <div className='form-center'>
-          <FormRow type='text' name='position' value={position} handleChange={handleJobInput} />
-          <FormRow type='text' name='company' value={company} handleChange={handleJobInput} />
           <FormRow
             type='text'
-            labelText='job location'
-            name='jobLocation'
-            value={jobLocation}
-            handleChange={handleJobInput}
+            name='title'
+            labelText='job title'
+            value={values.title}
+            handleChange={handleChange}
           />
-          <FormRowSelect
-            name='status'
-            value={status}
-            handleChange={handleJobInput}
-            list={statusOptions}
+          <FormRow
+            type='text'
+            name='company'
+            value={values.company}
+            handleChange={handleChange}
+          />
+          <FormRow
+            type='text'
+            name='location'
+            value={values.location}
+            handleChange={handleChange}
           />
           <FormRowSelect
             name='jobType'
             labelText='job type'
-            value={jobType}
-            handleChange={handleJobInput}
-            list={jobTypeOptions}
+            value={values.jobType}
+            handleChange={handleChange}
+            list={['full-time', 'part-time', 'internship', 'contract']}
           />
-          <div className='btn-container'>
-            <button
-              type='button'
-              className='btn btn-block clear-btn'
-              onClick={() => dispatch(clearValues())}
-            >
+          <FormRowSelect
+            name='workMode'
+            labelText='work mode'
+            value={values.workMode}
+            handleChange={handleChange}
+            list={['onsite', 'remote', 'hybrid']}
+          />
+          <FormRowSelect
+            name='status'
+            value={values.status}
+            handleChange={handleChange}
+            list={['interested', 'applied', 'interview', 'offer', 'rejected']}
+          />
+          <FormRow
+            type='date'
+            name='appliedDate'
+            labelText='applied date'
+            value={values.appliedDate}
+            handleChange={handleChange}
+          />
+          <FormRow
+            type='url'
+            name='jobLink'
+            labelText='job link'
+            value={values.jobLink}
+            handleChange={handleChange}
+          />
+          <div className='form-row'>
+            <label htmlFor='cvUpload' className='form-label'>
+              cv upload (optional)
+            </label>
+            <input id='cvUpload' type='file' className='form-input' onChange={handleFileChange} />
+            {values.cvFileName ? <small>{values.cvFileName}</small> : null}
+          </div>
+          <div className='form-row' style={{ gridColumn: '1 / -1' }}>
+            <label htmlFor='notes' className='form-label'>
+              notes
+            </label>
+            <textarea
+              id='notes'
+              name='notes'
+              value={values.notes}
+              onChange={handleChange}
+              className='form-textarea'
+              placeholder='Add HR details, follow-up reminders, interview notes, or anything important'
+            />
+          </div>
+          <div className='btn-container' style={{ gridColumn: '1 / -1' }}>
+            <button type='button' className='btn clear-btn' onClick={() => setValues(initialState)}>
               clear
             </button>
-            <button type='submit' className='btn btn-block submit-btn' disabled={isLoading}>
-              {isLoading ? 'please wait...' : 'submit'}
+            <button type='submit' className='btn submit-btn'>
+              save job
             </button>
           </div>
         </div>

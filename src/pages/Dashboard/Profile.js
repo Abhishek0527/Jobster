@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from 'react';
 import FormRow  from '../../components/FormRow';
 import Wrapper from '../../assets/wrappers/DashboardFormPage';
-import { updateuser } from '../../features/user/userSlice';
+import { updateuserRequest } from '../../features/user/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
@@ -23,7 +23,7 @@ const Profile = () => {
       toast.error('please fill out all fields');
       return;
     }
-    dispatch(updateuser(userData));
+    dispatch(updateuserRequest(userData));
   };
 
   const handleChange = (e) => {
