@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import Wrapper from '../assets/wrappers/DashboardFormPage';
+import ModalWrapper from '../assets/wrappers/ApplyJobModal';
 import { submitFakeApplication } from '../utils/fakeJobsApi';
 import FormRow from './FormRow';
 import FormRowSelect from './FormRowSelect';
@@ -25,6 +26,24 @@ const ApplyJobForm = ({ job, onClose }) => {
   useEffect(() => {
     setValues(initialState);
   }, [job]);
+
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [onClose]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -78,100 +97,115 @@ const ApplyJobForm = ({ job, onClose }) => {
   };
 
   return (
-    <Wrapper>
-      <form className='form' onSubmit={handleSubmit}>
-        <h3>apply for {job.title}</h3>
-        <div className='form-center'>
-          <FormRow
-            type='text'
-            name='firstName'
-            labelText='first name'
-            value={values.firstName}
-            handleChange={handleChange}
-          />
-          <FormRow
-            type='text'
-            name='lastName'
-            labelText='last name'
-            value={values.lastName}
-            handleChange={handleChange}
-          />
-          <FormRowSelect
-            name='hasExperience'
-            labelText='experience'
-            value={values.hasExperience}
-            handleChange={handleChange}
-            list={['no', 'yes']}
-          />
-          <FormRow
-            type='text'
-            name='collegeName'
-            labelText='college name'
-            value={values.collegeName}
-            handleChange={handleChange}
-          />
-          <FormRow
-            type='number'
-            name='percentage'
-            labelText='percentage'
-            value={values.percentage}
-            handleChange={handleChange}
-          />
-          <div className='form-row'>
-            <label htmlFor='cvUpload' className='form-label'>
-              cv upload
-            </label>
-            <input id='cvUpload' type='file' className='form-input' onChange={handleFileChange} />
-            {values.cvFileName ? <small>{values.cvFileName}</small> : null}
+    <ModalWrapper onClick={onClose}>
+      <div className='modal-shell' onClick={(event) => event.stopPropagation()}>
+        <div className='modal-topbar'>
+          <div className='modal-title'>
+            <h3>Easy Apply</h3>
+            <p>
+              {job.title} at {job.company}
+            </p>
           </div>
-          <FormRow
-            type='text'
-            name='companyName'
-            labelText='company name'
-            value={values.companyName}
-            handleChange={handleChange}
-            disabled={values.hasExperience === 'no'}
-          />
-          <FormRow
-            type='number'
-            name='expYears'
-            labelText='experience years'
-            value={values.expYears}
-            handleChange={handleChange}
-            disabled={values.hasExperience === 'no'}
-          />
-          <FormRow
-            type='text'
-            name='role'
-            labelText='role'
-            value={values.role}
-            handleChange={handleChange}
-            disabled={values.hasExperience === 'no'}
-          />
-          <div className='form-row' style={{ gridColumn: '1 / -1' }}>
-            <label htmlFor='profileSummary' className='form-label'>
-              profile summary
-            </label>
-            <textarea
-              id='profileSummary'
-              name='profileSummary'
-              value={values.profileSummary}
-              onChange={handleChange}
-              className='form-textarea'
-              disabled={values.hasExperience === 'no'}
-            />
-          </div>
-          <div className='btn-container' style={{ gridColumn: '1 / -1' }}>
-            <button type='button' className='btn clear-btn' onClick={onClose}>
-              cancel
-            </button>
-            <button type='submit' className='btn submit-btn' disabled={isSubmitting}>
-              {isSubmitting ? 'submitting...' : 'submit'}
-            </button>
-          </div>
+          <button type='button' className='close-btn' onClick={onClose} aria-label='Close apply form'>
+            ×
+          </button>
         </div>
-      </form>
-    </Wrapper>
+        <Wrapper>
+          <form className='form' onSubmit={handleSubmit}>
+            <h3>apply for {job.title}</h3>
+            <div className='form-center'>
+              <FormRow
+                type='text'
+                name='firstName'
+                labelText='first name'
+                value={values.firstName}
+                handleChange={handleChange}
+              />
+              <FormRow
+                type='text'
+                name='lastName'
+                labelText='last name'
+                value={values.lastName}
+                handleChange={handleChange}
+              />
+              <FormRowSelect
+                name='hasExperience'
+                labelText='experience'
+                value={values.hasExperience}
+                handleChange={handleChange}
+                list={['no', 'yes']}
+              />
+              <FormRow
+                type='text'
+                name='collegeName'
+                labelText='college name'
+                value={values.collegeName}
+                handleChange={handleChange}
+              />
+              <FormRow
+                type='number'
+                name='percentage'
+                labelText='percentage'
+                value={values.percentage}
+                handleChange={handleChange}
+              />
+              <div className='form-row'>
+                <label htmlFor='cvUpload' className='form-label'>
+                  cv upload
+                </label>
+                <input id='cvUpload' type='file' className='form-input' onChange={handleFileChange} />
+                {values.cvFileName ? <small>{values.cvFileName}</small> : null}
+              </div>
+              <FormRow
+                type='text'
+                name='companyName'
+                labelText='company name'
+                value={values.companyName}
+                handleChange={handleChange}
+                disabled={values.hasExperience === 'no'}
+              />
+              <FormRow
+                type='number'
+                name='expYears'
+                labelText='experience years'
+                value={values.expYears}
+                handleChange={handleChange}
+                disabled={values.hasExperience === 'no'}
+              />
+              <FormRow
+                type='text'
+                name='role'
+                labelText='role'
+                value={values.role}
+                handleChange={handleChange}
+                disabled={values.hasExperience === 'no'}
+              />
+              <div className='form-row' style={{ gridColumn: '1 / -1' }}>
+                <label htmlFor='profileSummary' className='form-label'>
+                  profile summary
+                </label>
+                <textarea
+                  id='profileSummary'
+                  name='profileSummary'
+                  value={values.profileSummary}
+                  onChange={handleChange}
+                  className='form-textarea'
+                  disabled={values.hasExperience === 'no'}
+                />
+              </div>
+              <div className='btn-container' style={{ gridColumn: '1 / -1' }}>
+                <button type='button' className='btn clear-btn' onClick={onClose}>
+                  cancel
+                </button>
+                <button type='submit' className='btn submit-btn' disabled={isSubmitting}>
+                  {isSubmitting ? 'submitting...' : 'submit'}
+                </button>
+              </div>
+            </div>
+          </form>
+        </Wrapper>
+      </div>
+    </ModalWrapper>
   );
 };
 
