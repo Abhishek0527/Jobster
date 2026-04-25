@@ -7,6 +7,7 @@ const navItems = [
   { label: 'Stats', path: '/' },
   { label: 'All Jobs', path: '/all-jobs' },
   { label: 'Add Job', path: '/add-job' },
+  { label: 'AI Chatbot', path: '/chatbot' },
   { label: 'Profile', path: '/profile' },
 ];
 

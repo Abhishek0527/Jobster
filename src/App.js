@@ -2,7 +2,7 @@ import { Landing, Error, Register } from './pages';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { AddJob, AllJobs, Profile, SharedLayout, Stats } from './pages/Dashboard';
+import { AddJob, AllJobs, Chatbot, Profile, SharedLayout, Stats } from './pages/Dashboard';
 import ProtectedRoute from './pages/ProtectedRoute';
 
 function App() {
@@ -17,6 +17,7 @@ function App() {
           <Route path='profile' element={<Profile />} />
           <Route path='all-jobs' element={<AllJobs />} />
           <Route path='add-job' element={<AddJob />} />
+          <Route path='chatbot' element={<Chatbot />} />
           <Route index element={<Stats />} />
         </Route>
         <Route path='landing' element={<Landing />} />
